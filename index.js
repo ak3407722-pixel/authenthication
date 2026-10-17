@@ -54,13 +54,25 @@ app.post('/signin', (req, res) => {
     }
   console.log(users);
 });
-app.get("/me",function(req,res) {
+function auth(req,res,next){
+    const token=req.header.token;
+    const decodeData=jwt.verify(token,JWT_SECRET);
+    if(decodeData.username){
+        req.username=decodeData.username;
+        next()
+    }
+    else{
+        res.json({
+            message:"you are not logged in"
+        })
+    }
+}
+app.get("/me",auth,function(req,res) {
     const token=req.headers.token
-    const decodedInformation =jwt.verify(token,JWT_SECRET)
-     const username=decodedInformation.username
+    
     let founduser=null;
     for(let i= 0;i<users.length;i++){
-        if(users[i].username==username){
+        if(users[i].username==req.username){
           founduser=users[i]
         }
     }
