@@ -4,6 +4,10 @@ const jwt=require('jsonwebtoken')
 const app=express();
 const JWT_SECRET="Iloveyou"
 app.use(express.json());
+function logger(req,res,next){
+    console.log(req.method+"method")
+    next()
+}
 function generateToken() {
     let options = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
@@ -15,7 +19,7 @@ function generateToken() {
     return token;
 }
  let users = [];
-app.post('/signup', (req, res) => {
+app.post('/signup',logger, (req, res) => {
    const username=req.body.username;
    const password=req.body.password;
     users.push({
@@ -29,7 +33,7 @@ app.post('/signup', (req, res) => {
   
 });
 
-app.post('/signin', (req, res) => {
+app.post('/signin',logger, (req, res) => {
     const username=req.body.username;
     const password=req.body.password;
     let founduser=null;
@@ -67,7 +71,7 @@ function auth(req,res,next){
         })
     }
 }
-app.get("/me",auth,function(req,res) {
+app.get("/me",logger,auth,function(req,res) {
     const token=req.headers.token
     
     let founduser=null;
@@ -90,7 +94,6 @@ app.get("/me",auth,function(req,res) {
 
 
 });
-
 
 
 app.listen(3000);
